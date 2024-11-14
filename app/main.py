@@ -1,11 +1,15 @@
 import os
 from fastapi import FastAPI
 from datetime import datetime, timezone, timedelta
-from routers import stt, data
+from routers import stt, database
 from dotenv import load_dotenv
 from utils.logger import logger
-from services.transcription import TranscriptionService
-from services.vad import get_vad_service
+
+## Services
+from services.pysqlite_service import get_sqlite_service
+from services.vad_service import get_vad_service
+from services.transcription_service import TranscriptionService
+
 
 ## Setup OS/DIR Path
 abspath = os.path.abspath(__file__)
@@ -18,13 +22,19 @@ load_dotenv(override=True)
 # Initialize FastAPI
 app = FastAPI()
 
+
 async def startup():
     """
     Initialize services on application startup
     """
+    
     logger.info("Starting application initialization...")
     
     try:
+        # Initialize SQLite service. It will create the connection internally
+        get_sqlite_service("transcriptions.db")
+        logger.info("SQLite database initialized successfully")
+        
         # Initialize VAD service
         get_vad_service()
 
@@ -41,10 +51,12 @@ async def startup():
     
     logger.info("Application startup completed")
 
+
 async def shutdown():
     """
     Cleanup on application shutdown
     """
+    
     logger.info("Application shutdown initiated")
     try:
         # Cleanup VAD service
@@ -58,6 +70,7 @@ async def shutdown():
 app.add_event_handler("startup", startup)
 app.add_event_handler("shutdown", shutdown)
 
+
 @app.get("/health")
 async def health_check():
     try:
@@ -70,6 +83,7 @@ async def health_check():
         logger.error(f"Health check failed: {str(e)}")
         raise
     
-# Add routers
+    
+# Since we have only a few routers, add it directly here.
 app.include_router(stt.router)
-app.include_router(data.router)
+app.include_router(database.router)

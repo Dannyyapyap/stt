@@ -12,9 +12,10 @@ Requires HF_TOKEN environment variable for HuggingFace authentication.
 
 import os
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from services.audio_processor import AudioReader, AudioService
-from services.vad import get_vad_service
-from services.transcription import TranscriptionService
+from services.audio_processor_service import AudioReader, AudioService
+from services.pysqlite_service import get_sqlite_service
+from services.vad_service import get_vad_service
+from services.transcription_service import TranscriptionService
 from utils.logger import logger
 
 
@@ -56,7 +57,30 @@ async def transcribe_file(audio: UploadFile = File(..., description="The audio f
         transcription_service = TranscriptionService(api_key=os.getenv("HF_TOKEN"))
         result = await transcription_service.transcribe(vad_processed_audio)
         
-        return {"message": result}
+        ## Step 5: Store transcription result in SQLite
+        sqlite_service = get_sqlite_service()
+        record_id = await sqlite_service.insert_transcription(
+            file_name=audio_info["file_name"],
+            audio_format=audio_info["audio_format"],
+            channel=audio_info["channel"],
+            sample_rate=audio_info["sample_rate"],
+            duration=audio_info["duration"],
+            transcription=result["text"]
+        )
+        
+        if record_id is None:
+            logger.error("Failed to store transcription in database")
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to store transcription result"
+            )
+            
+        logger.info("Successfully inserted record into database")
+            
+        return {
+            "metadata": audio_info,
+            "transcript": result["text"],       
+        }
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error in transcribing file: {str(e)}")
