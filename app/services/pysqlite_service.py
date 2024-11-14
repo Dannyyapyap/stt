@@ -45,7 +45,8 @@ class SQLiteService:
     _instance = None  # Class variable for singleton instance
     
     def __init__(self, db_path: str = "transcriptions.db"):
-        self.db_path = db_path
+        root_dir = Path(__file__).parent.parent.parent
+        self.db_path = root_dir / db_path
         self._initialized = False
         self.db = None
 

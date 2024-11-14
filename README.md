@@ -20,6 +20,26 @@ Tested on Python 3.12.3
 ## Getting Started
 
 ### Running Locally
+There are two methods for setting up the project locally: using the provided setup script (setup_env.sh) or setting it up manually
+
+---
+
+### Method 1: Setup with the provided script
+   1. From the root project directory, run the setup script to automate the environment setup:
+      ```bash
+      bash setup_env.sh
+      ```
+
+   2. Once the script finish running, activate the virtual environment:
+      ```bash
+      source env/bin/activate   # For Linux/Mac
+      # or
+      .\env\Scripts\activate    # For Windows
+      ```
+
+   3. Replace `your_hugging_face_api_token_here` in the .env file with your actual HuggingFace API token
+
+### Method 2: Setup manually
 
 1. Create and activate Python virtual environment
    ```bash
@@ -33,10 +53,12 @@ Tested on Python 3.12.3
    ```
    Note: Requires Python 3.12.3 or above
 
+
 2. Install dependencies
    ```bash
    pip install -r requirements.txt
    ```
+
 
 3. Configure environment variables
 
@@ -49,10 +71,41 @@ Tested on Python 3.12.3
    ```
    Note: Replace `your_hugging_face_api_token_here` with your actual HuggingFace API token
 
+### Running the code
+By running the below command, the application will be served on port 8020. Feel free to change the port if necessary
 
-## Huggingface Resource
-- Base model used: [whisper-tiny](https://huggingface.co/openai/whisper-tiny)
+For running in development mode:
+```
+fastapi dev --port 8020
+```
 
+For running in production mode:
+```
+fastapi prod --port 8020
+```
+
+### Running via Docker
+1. To build the Docker image and start it in a container, use:
+   ```
+   docker compose up -d --build
+   ```
+
+   After executing the above command, two directories will be created in the location where the docker-compose file is located:
+   1. db
+   2. logs  
+
+2. To view the logs of the running container
+   ```
+   docker compose logs -f
+   ```
+
+### Accessing the SwaggerUI to verify that code is working
+
+If hosted on port 8020,
+access via: 
+```
+localhost:8020/docs
+```
 
 ## Assumptions
 1. No infrastructure to host Whisper model locally, hence using Hugging Face's Inference API
@@ -60,6 +113,10 @@ Tested on Python 3.12.3
 2. Code runs on CPU-only server (no GPU packages installed)
 
 3. Audio content is single channel and not based on dual channel(e.g., Call center recordings, YouTube clips) which might require more preprocessing steps (e.g., downmixing, channel separation)
+
+4. This setup is intended only for prototyping, to test the accuracy and speed of different Whisper models (such as Whisper Tiny, Base, etc.). It is not meant for production use, and as such, the testing will focus on evaluating how the model performs in terms of transcription quality and inference time.
+
+5. There is a limited number of API requests available due to Hugging Face's rate limiting and possibly restricted quotas. In addition, there are restrictions on audio clip duration and file size, with Hugging Face's API typically allowing up to 100MB per file and duration constraints based on the file type and size. For large audio files, splitting them into smaller segments may be necessary.
 
 
 ## Implementation
@@ -79,3 +136,18 @@ Tested on Python 3.12.3
 4. Voice Detection:
    - Uses VAD (Voice Activity Detection) to remove silences
    - Improves accuracy and reduces resource usage
+
+5. Transcription
+   - Uses the selected model, the processed audio chunks are sent for transcription
+
+6. Data storage
+   - The transcript together with the audio metadata will be saved into the SQLite DB
+   - Users can retrieve the list of stored transcription records.
+   - Users can search for records using partial strings (file names or transcriptions). The search is case-insensitive.
+   - Users will be able to delete record based on their record ID.
+
+
+## Huggingface Resource
+- Base model used: [whisper-tiny](https://huggingface.co/openai/whisper-tiny)
+- Other available models: [Whisper Models](https://huggingface.co/collections/openai/whisper-release-6501bba2cf999715fd953013)
+
