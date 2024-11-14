@@ -4,11 +4,9 @@ services:
     ports:
       - "8020:8020"
     volumes:
-      - ./logs/log.log:/app/log.log
-      - ./db/transcriptions.db:/app/transcriptions.db
+      - ./logs/log.log:/log.log
+      - ./db/transcriptions.db:/transcriptions.db
     environment:
-      - LOG_PATH=/app/log.log
-      - DATABASE_PATH=/app/transcriptions.db
       - WHISPER_MODEL=openai/whisper-tiny
       - HF_TOKEN=<INPUT YOU HUGGINGFACE API TOKEN HERE>
       - HF_MAX_RETRIES=5

@@ -85,16 +85,18 @@ fastapi prod --port 8020
 ```
 
 ### Running via Docker
-1. To build the Docker image and start it in a container, use:
+1. Replace `<INPUT YOU HUGGINGFACE API TOKEN HERE>` in the docker-compose.yml with your actual HuggingFace API token
+
+2. Build the Docker image and start it in a container, use:
    ```
-   docker compose up -d --build
+   bash build_and_run_docker.sh
    ```
 
    After executing the above command, two directories will be created in the location where the docker-compose file is located:
    1. db
    2. logs  
 
-2. To view the logs of the running container
+3. View the logs of the running container
    ```
    docker compose logs -f
    ```

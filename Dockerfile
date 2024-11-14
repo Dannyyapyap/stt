@@ -6,7 +6,7 @@ WORKDIR /build
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
-    git \ 
+    git \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -35,8 +35,7 @@ RUN apt-get update && \
 
 # Set environment variables
 ENV PATH="/venv/bin:$PATH" \
-    PYTHONPATH=/app \
-    DATABASE_PATH=/transcriptions.db
+    PYTHONPATH=/app
 
 # Copy app code
 COPY app/ .
