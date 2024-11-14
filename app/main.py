@@ -28,12 +28,9 @@ async def startup():
     Initialize services on application startup
     """
     
-    logger.info("Starting application initialization...")
-    
     try:
         # Initialize SQLite service. It will create the connection internally
         get_sqlite_service("transcriptions.db")
-        logger.info("SQLite database initialized successfully")
         
         # Initialize VAD service
         get_vad_service()
@@ -41,15 +38,12 @@ async def startup():
         # Initialize transcription service
         service = TranscriptionService(api_key=os.getenv("HF_TOKEN", ""))
         warm_up_success = await service.warm_up()
-        if warm_up_success:
-            logger.info("Model warm-up completed successfully")
-        else:
+        if not warm_up_success:
             logger.warning("Model warm-up was not successful, but application will continue")
     except Exception as e:
-        logger.error(f"Error during initialization: {str(e)}")
-        logger.warning("Application will start, but performance may be affected")
+        logger.warning(f"Error during initialization: {str(e)}. Application will start, but performance may be affected")
     
-    logger.info("Application startup completed")
+    logger.debug("Application startup completed")
 
 
 async def shutdown():

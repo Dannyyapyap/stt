@@ -111,7 +111,7 @@ class TranscriptionService:
             audio_data.seek(0)
             
             # Send request to Hugging Face API
-            logger.info("Sending request to Hugging Face API")
+            logger.debug("Sending request to Hugging Face API")
             response = requests.post(
                 self.api_url,
                 headers=self.headers,
@@ -120,7 +120,7 @@ class TranscriptionService:
             
             # If model is still loading, retry with backoff
             if response.status_code == 503:
-                logger.warning("Model not ready. Starting warm-up sequence...")
+                logger.debug("Model not ready. Starting warm-up sequence...")
                 await self.warm_up()
                 
                 # Retry the transcription after warm-up
@@ -132,7 +132,7 @@ class TranscriptionService:
                 )
             
             result = response.json()
-            logger.info("Successfully received transcription from API")
+            logger.debug("Successfully received transcription from API")
             
             return result
             

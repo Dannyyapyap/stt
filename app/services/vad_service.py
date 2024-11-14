@@ -41,7 +41,6 @@ class VADService:
     
     def __init__(self):
         if not hasattr(self, 'model'):
-            logger.info("Initializing Silero VAD model...")
             self.model = load_silero_vad()
             logger.info("Silero VAD model initialized successfully")
     
@@ -58,7 +57,7 @@ class VADService:
         """
         
         try:
-            logger.info("Applying VAD to remove silence")
+            logger.debug("Applying VAD to remove silence")
             
             # Load audio from BytesIO
             wav, sr = sf.read(audio_content)

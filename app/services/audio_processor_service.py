@@ -85,7 +85,7 @@ class AudioService:
                 logger.error(error_message)
                 raise HTTPException(status_code=400, detail=error_message)
         else:
-            logger.info("Converting input audio to WAV format")
+            logger.debug("Converting input audio to WAV format")
             audio_content.seek(0)
             try:
                 audio = AudioSegment.from_file(audio_content)
@@ -93,7 +93,7 @@ class AudioService:
                 audio.export(wav_buffer, format="wav")
                 wav_buffer.seek(0)
                 audio = AudioSegment.from_wav(wav_buffer)
-                logger.info("Audio file converted to WAV format")
+                logger.debug("Audio file converted to WAV format")
                 return audio
             except Exception as e:
                 error_message = f"Failed to convert audio to WAV format: {str(e)}"
@@ -110,14 +110,14 @@ class AudioService:
             logger.info(f"Multichannel audio detected, {audio.channels} audio")
             try:
                 audio = audio.set_channels(1)
-                logger.info(f"Audio converted to {audio.channels} audio")
+                logger.debug(f"Audio converted to {audio.channels} audio")
                 return audio
             except Exception as e:
                 error_message = f"Error in audio channel conversion: {str(e)}"
                 logger.error(error_message)
                 raise HTTPException(status_code=400, detail=error_message)
         
-        logger.info(f"{audio.channels} channel audio detected")
+        logger.debug(f"{audio.channels} channel audio detected")
         
         return audio
     
@@ -129,7 +129,7 @@ class AudioService:
         if audio.frame_rate != self.target_sample_rate:
             logger.info(f"Resampling audio from {audio.frame_rate}Hz to {self.target_sample_rate}Hz")
             audio = audio.set_frame_rate(self.target_sample_rate)
-            logger.info(f"Audio resampled to {self.target_sample_rate}Hz")
+            logger.debug(f"Audio resampled to {self.target_sample_rate}Hz")
             return audio
         
         logger.info(f"Audio already at target sample rate of {self.target_sample_rate}Hz")

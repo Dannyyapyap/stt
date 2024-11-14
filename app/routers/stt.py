@@ -37,7 +37,7 @@ async def transcribe_file(audio: UploadFile = File(..., description="The audio f
         )
     
     try:
-        logger.info("Starting transcription request.")
+        logger.debug("Starting transcription request.")
         
         ## Step 1: Retrieve audio metadata (e.g. audio format, sample rate)
         audio_reader = AudioReader(audio)
