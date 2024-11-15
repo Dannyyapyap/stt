@@ -22,6 +22,9 @@ RUN pip install --upgrade pip && \
 # Runtime stage
 FROM python:3.12.3-slim AS build-image
 
+# Create non-root user
+RUN useradd -m -u 1000 appuser
+
 WORKDIR /app
 
 ## Copy virtual env from the first stage
@@ -37,8 +40,14 @@ RUN apt-get update && \
 ENV PATH="/venv/bin:$PATH" \
     PYTHONPATH=/app
 
-# Copy app code
+# Copy app code and remove tests folder
 COPY app/ .
+RUN rm -rf tests/
+
+# Create necessary files and set permissions
+RUN touch /log.log /transcriptions.db && \
+    chown -R appuser:appuser /app /venv /log.log /transcriptions.db && \
+    chmod 644 /log.log /transcriptions.db
 
 EXPOSE 8020
 

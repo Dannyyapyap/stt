@@ -3,7 +3,9 @@
 A FastAPI service that transcribes audio files using OpenAI's Whisper model via HuggingFace's Inference API.
 
 ## Pre-requisite
-Tested on Python 3.12.3
+Tested on 
+-  Python Version: 3.12.3
+-  OS: Ubuntu 24.04
 
 1. Install FFMPEG (for audio processing)
     - For Ubuntu:
@@ -85,12 +87,17 @@ fastapi prod --port 8020
 ```
 
 ### Running via Docker
+Tested on 
+Docker version 27.3.0, build e85edf8
+Docker Compose version v2.29.6
+
 1. Replace `<INPUT YOU HUGGINGFACE API TOKEN HERE>` in the docker-compose.yml with your actual HuggingFace API token
 
 2. Build the Docker image and start it in a container, use:
    ```
    bash build_and_run_docker.sh
    ```
+   Note: Only run this script on the first setup, if encounter any issues/errors, remove the /db and /logs folder from the directory and re-execute the script.
 
    After executing the above command, two directories will be created in the location where the docker-compose file is located:
    1. db
@@ -99,6 +106,19 @@ fastapi prod --port 8020
 3. View the logs of the running container
    ```
    docker compose logs -f
+   ```
+
+4. To bring down the container
+   ```bash
+   docker compose down -v
+   ```
+   
+5. To bring up the container again
+   ```bash
+   docker compose up -d
+
+   # If your /db and /logs folder were deleted, re-execute the below command again
+   bash setup_env.sh
    ```
 
 ### Accessing the SwaggerUI to verify that code is working
