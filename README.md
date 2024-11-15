@@ -83,7 +83,7 @@ fastapi dev --port 8020
 
 For running in production mode:
 ```
-fastapi prod --port 8020
+fastapi run --port 8020
 ```
 
 ### Running via Docker
