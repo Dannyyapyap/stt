@@ -145,6 +145,7 @@ localhost:8020/docs
 1. Model Selection:
    - Users can select different Whisper models via `WHISPER_MODEL` environment variable
    - Available models list: [Whisper Models](https://huggingface.co/collections/openai/whisper-release-6501bba2cf999715fd953013)
+   - User can specify the VAD aggressiveness via the environment variable "VAD_THRESHOLD", it will be defaulted to 0.3. Least Aggressive: 0.3 to Aggressive: 0.8
 
 2. Model Warm-up:
    - FastAPI application sends initial request at startup

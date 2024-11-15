@@ -35,6 +35,7 @@ WHISPER_MODEL=openai/whisper-tiny
 HF_TOKEN=your_hugging_face_api_token_here
 HF_MAX_RETRIES=5
 HF_RETRY_DELAY=2
+VAD_THRESHOLD=0.3
 EOL
 
 echo ".env file created with necessary configuration."

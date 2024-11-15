@@ -29,6 +29,7 @@ Usage:
     )
 """
 
+import os
 from io import BytesIO
 import numpy as np
 import soundfile as sf
@@ -50,7 +51,7 @@ class VADService:
             cls._instance = cls() # If not, create an instance of VADService to be shared throughout the lifecycle. Equivalent to calling VADService __init__ method
         return cls._instance
 
-    async def remove_silence(self, audio_content: BytesIO, threshold: float = 0.3):
+    async def remove_silence(self, audio_content: BytesIO):
         """
         Remove silence from audio using VAD following Silero's documentation.
         Audio is expected to be 16kHz mono WAV.
@@ -66,7 +67,7 @@ class VADService:
             speech_timestamps = get_speech_timestamps(
                 wav,
                 self.model,
-                threshold=threshold,
+                threshold=float(os.getenv("VAD_THRESHOLD", 0.3)),
                 return_seconds=False
             )
             

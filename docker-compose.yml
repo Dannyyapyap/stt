@@ -11,4 +11,5 @@ services:
       - HF_TOKEN=<INPUT YOU HUGGINGFACE API TOKEN HERE>
       - HF_MAX_RETRIES=5
       - HF_RETRY_DELAY=2
+      - VAD_THRESHOLD=0.3
     restart: unless-stopped

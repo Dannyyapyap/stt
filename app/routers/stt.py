@@ -51,7 +51,7 @@ async def transcribe_file(audio: UploadFile = File(..., description="The audio f
         
         ## Step 3: Apply VAD to remove silences from the preprocessed audio(step 2)
         vad_service = get_vad_service()
-        vad_processed_audio = await vad_service.remove_silence(processed_audio, threshold=0.3)
+        vad_processed_audio = await vad_service.remove_silence(processed_audio)
         
         ## Step 4: Send final processed audio to transcription service (HuggingFace Inference API)
         transcription_service = TranscriptionService(api_key=os.getenv("HF_TOKEN"))
